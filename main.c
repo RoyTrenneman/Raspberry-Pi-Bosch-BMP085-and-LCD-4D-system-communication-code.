@@ -33,12 +33,11 @@ Circuit detail:
 Use make to compil.
 Depends on libgeniePi https://github.com/4dsystems/ViSi-Genie-RaspPi-Library
 Depends on GENIE_OBJ_THERMOMETER objet 
-
+Depends on GENIE_OBJ_COOL_GAUGE objet
 TODO:
 
 Manage Genie Event
-Using Gauge to display sealevel pressure
- 
+Make a bar graph history 
  ***********************************************************************
  */
 
@@ -92,6 +91,15 @@ static void updateTemp (int value)
  genieWriteObj (GENIE_OBJ_THERMOMETER, 0, v) ;
 }
 
+static void updatePressure (int live)
+{
+ int v ;
+ v = live - 940 ;
+ if (v <   0) v =   0 ;
+ if (v > 120) v = 120 ;
+ genieWriteObj (GENIE_OBJ_COOL_GAUGE, 0, v) ;
+
+}
 
 
 /*
@@ -135,15 +143,19 @@ void handleGenieEvent (struct genieReplyStruct *reply)
  *********************************************************************************
  */
 
-static void *handleTemperature (void *data)
+static void *handleTemperaturePressure (void *data)
 {
 double temperature;
+double pressure;
         for (;;)
 	{
 	bmp085_Calibration();
         temperature = bmp085_GetTemperature(bmp085_ReadUT());
+	pressure = bmp085_GetPressure(bmp085_ReadUP());
+        int press = (pressure/100);
 	int temp = round(temperature/10);
 	updateTemp (temp) ;
+	updatePressure (press) ;
  	sleep(10) ; //Wait 10s to avoid concurrent access
 }
     return 0;
@@ -177,7 +189,7 @@ int main ()
 
 // Start the temperature and pressure sensor reading threads
 
-  (void)pthread_create (&myThread, NULL, handleTemperature, NULL) ;
+  (void)pthread_create (&myThread, NULL, handleTemperaturePressure, NULL) ;
 
 // Big loop - just wait for events from the display now
 
