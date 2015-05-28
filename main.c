@@ -152,7 +152,7 @@ double pressure;
 	bmp085_Calibration();
         temperature = bmp085_GetTemperature(bmp085_ReadUT());
 	pressure = bmp085_GetPressure(bmp085_ReadUP());
-        int press = (pressure/100);
+        int press = round(pressure/100);
 	int temp = round(temperature/10);
 	updateTemp (temp) ;
 	updatePressure (press) ;
