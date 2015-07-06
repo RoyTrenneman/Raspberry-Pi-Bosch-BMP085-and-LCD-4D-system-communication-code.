@@ -88,9 +88,11 @@ void bmp085_i2c_Read_Block(int fd, __u8 address, __u8 length, __u8 *values)
 }
 
 
-void bmp085_Calibration()
+unsigned int bmp085_Calibration()
 {
+
    int fd = bmp085_i2c_Begin();
+   if (fd > 0){
    ac1 = bmp085_i2c_Read_Int(fd,0xAA);
    ac2 = bmp085_i2c_Read_Int(fd,0xAC);
    ac3 = bmp085_i2c_Read_Int(fd,0xAE);
@@ -102,7 +104,10 @@ void bmp085_Calibration()
    mb = bmp085_i2c_Read_Int(fd,0xBA);
    mc = bmp085_i2c_Read_Int(fd,0xBC);
    md = bmp085_i2c_Read_Int(fd,0xBE);
+   return fd;
    close(fd);
+   }
+return 0;
 }
 
 // Read the uncompensated temperature value
