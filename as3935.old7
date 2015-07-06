@@ -1,0 +1,138 @@
+/*
+Raspberry Pi AS3935 communication code.
+*/
+
+#include <math.h>
+#include <stdio.h>
+#include <stdint.h>
+#include <fcntl.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <linux/i2c-dev.h>
+#include <linux/i2c.h>
+#include <sys/ioctl.h>
+#include <wiringPiI2C.h>
+#define AS3935_I2C_ADDRESS 0x03
+
+int reg7 ;
+int reg8 ;
+int reg3 ;
+int reg0 ;
+int reg1 ;
+
+int AS3935_i2c_Begin()
+{
+int fd = wiringPiI2CSetup (0x03);
+
+return fd;
+}
+
+
+// Read 1 word from the AS3935 
+int AS3935_i2c_Read_Int(int as, __u8 address)
+{
+int res = wiringPiI2CReadReg8 (as, address);
+   if (res < 0) {
+      printf ("cannot read bytes for as3935:") ;
+   //  close(as);
+      exit(1);
+   }
+     return res;
+}
+
+//Write a byte to the AS3935
+void AS3935_i2c_Write_Byte(int as, __u8 address, __u8 value)
+{
+if ( wiringPiI2CWriteReg8 (as, address, value) < 0){
+      //close(as);
+      exit(1);
+  }
+}
+
+
+void AS3935_Calibration()
+{
+//CALIB_RCO: 
+int fd = AS3935_i2c_Begin();
+
+//Set all registers in default mode
+//write 0x96 into Register 0x3C
+//	AS3935_i2c_Write_Byte(as,0x3C,0x96);
+//	usleep(3000);
+//Calibrate Internal Capacitor to max (120pF)
+	reg8 = AS3935_i2c_Read_Int(fd,0x08);
+	usleep(3000);
+	AS3935_i2c_Write_Byte(fd,0x08, (reg8 & 0xF0) | 0x0F) ;
+	usleep(3000);
+//Recalibrating the automatically the RC ocsillators
+	AS3935_i2c_Write_Byte(fd,0x3D,0x96);
+	usleep(3000);
+//Read Register 0x08; 
+	reg8 = AS3935_i2c_Read_Int(fd,0x08);
+	usleep(3000);
+
+//write 0x01 into Register 0x08[5]; 
+	AS3935_i2c_Write_Byte(fd,0x08, (reg8 | 0x20)) ;
+	usleep(3000);
+//Read Register 0x08; 
+	reg8 = AS3935_i2c_Read_Int(fd,0x08);
+	usleep(3000);
+//write 0x00 into Register 0x08[5]; 
+	AS3935_i2c_Write_Byte(fd,0x08, (reg8 & 0xdf)) ;
+	usleep(2000);
+//Set noise floor to 0x00 into register 0x01[6:4]
+	reg1 = AS3935_i2c_Read_Int(fd,0x01);
+	AS3935_i2c_Write_Byte(fd,0x01, (reg1 & 0x8f)) ;
+	reg8 = AS3935_i2c_Read_Int(fd,0x08);
+	reg0 = AS3935_i2c_Read_Int(fd,0x00);
+	reg1 = AS3935_i2c_Read_Int(fd,0x01);
+
+	close(fd);
+}
+
+int AS3935_returnDistance()
+{
+int distance;
+int as = AS3935_i2c_Begin();
+//Read Register 0x07; 
+	reg7 = AS3935_i2c_Read_Int(as,0x07);
+//Return Bits[5:0]
+	distance = reg7 & 0x3f;
+	return distance;
+	close(as);
+}
+
+int AS3935_returnInterrupt()
+{
+int interrupt;
+int as = AS3935_i2c_Begin();
+//Read Register 0x07; 
+	reg3 = AS3935_i2c_Read_Int(as,0x03);
+//Return Bits[5:0]
+	interrupt = reg3 ;// & 0x0f;
+	return interrupt;
+	close(as);
+}
+
+void display_LCO()
+{
+int as = AS3935_i2c_Begin();
+	reg3 = AS3935_i2c_Read_Int(as,0x03);
+	AS3935_i2c_Write_Byte(as,0x03, (reg3 & 0x3F) | 0xC0) ;
+	usleep(2000);
+	reg8 = AS3935_i2c_Read_Int(as,0x08);
+	AS3935_i2c_Write_Byte(as,0x08, (reg8 & 0xFF) | 0x80) ;
+	close(as);
+}
+void set_cap(int c)
+{//Calibrate Internal Capacitor to max (120pF)              
+int as = AS3935_i2c_Begin();
+        reg8 = AS3935_i2c_Read_Int(as,0x08);              
+        usleep(3000);        
+//	int cprime = (c & 0x0F); 
+        //AS3935_i2c_Write_Byte(as,0x08, (reg8 & 0xF0) | c ) ;     
+        usleep(3000);
+        reg8 = AS3935_i2c_Read_Int(as,0x08);              
+	close(as);
+printf ("%x", reg8);
+}
