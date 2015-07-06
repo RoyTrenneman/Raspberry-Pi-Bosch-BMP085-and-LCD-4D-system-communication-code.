@@ -8,7 +8,7 @@
 DEBUG	= -O2
 CC	= gcc
 INCLUDE	= -I/usr/local/include
-CFLAGS	= $(DEBUG) -Wall -lm $(INCLUDE) -Winline -pipe
+CFLAGS	= $(DEBUG) -g -Wall -lm $(INCLUDE) -Winline -pipe 
 
 LDFLAGS	= -L/usr/local/lib
 LIBS    = -lm -lpthread -lwiringPi -lgeniePi
@@ -22,11 +22,12 @@ OBJ	=	$(SRC:.c=.o)
 BINS	=	$(SRC:.c=)
 
 
-Weather:	main.o bmp.o smbus.o
+Weather:	main.o bmp.o smbus.o as3935.o
 	@echo [link]
-	@$(CC) -o $@ main.o bmp.o smbus.o $(LDFLAGS) $(LIBS)
+	@$(CC) -o $@ main.o bmp.o smbus.o as3935.o $(LDFLAGS) $(LIBS)
 
 bmp.o: bmp.h
+as3935.o: as3935.h
 
 .c.o:	
 	@echo [Compile] $<
