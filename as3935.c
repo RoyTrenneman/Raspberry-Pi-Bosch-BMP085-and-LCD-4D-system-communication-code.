@@ -53,6 +53,7 @@ int read_data(int i)
 	int as = AS3935_i2c_Begin();
 	AS3935_i2c_Read_Int(as, 0x00, 9, values);
 	close(as);
+	usleep(2000);
 	return values[i];
 }
 
@@ -64,19 +65,19 @@ void AS3935_Calibration()
 // Power Down / Power on
 	values = read_data(0);
 	AS3935_i2c_Write_Byte(as,0x00, (values | 0x01)) ;
-	usleep(3000);
+	usleep(5000);
 	AS3935_i2c_Write_Byte(as,0x00, (values & 0xFE)) ;
 	usleep(3000);
 //Set all registers in default mode
-/* write 0x96 into Register 0x3C
+// write 0x96 into Register 0x3C
 	AS3935_i2c_Write_Byte(as,0x3C,0x96);
 	usleep(3000);
 //Calibrate Internal Capacitor to max (120pF)
 	values = read_data(8);
-	//reg8 = AS3935_i2c_Read_Int(as,0x08);
+//reg8 = AS3935_i2c_Read_Int(as,0x08);
 	usleep(3000);
 	AS3935_i2c_Write_Byte(as,0x08, (values & 0xF0) | 0x0f) ;
-*/	usleep(3000);
+	usleep(3000);
 //Recalibrating the automatically the RC ocsillators
 	AS3935_i2c_Write_Byte(as,0x3D,0x96);
 	usleep(3000);
@@ -189,5 +190,5 @@ int read_reg(int i)
 {
 	int reg ;
 	reg = read_data(i);
-	return reg;
+	return reg & 0xFF;
 }
