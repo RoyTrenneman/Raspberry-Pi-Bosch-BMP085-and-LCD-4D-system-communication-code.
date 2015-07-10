@@ -206,7 +206,7 @@ static void *handleTemperaturePressure (void *data)
 int main (int argc, char *argv[])
 {
 	if (argc > 1){
-		if(strcmp(argv[1], "-d") ==0 ){
+		if(strcmp(argv[1], "-L") ==0 ){
 		display_LCO() ;
 		exit (1);
 		} else if(strcmp(argv[1], "-c") ==0) {
@@ -242,7 +242,9 @@ int main (int argc, char *argv[])
 			(void)pthread_create (&bmp085, NULL, handleTemperaturePressure, NULL) ;
 			(void)pthread_join (bmp085, NULL);
 			return 0 ;
-  		}
+  		} else {
+		 usage();
+		} 
 	} else {
 	 usage();
 	}	
