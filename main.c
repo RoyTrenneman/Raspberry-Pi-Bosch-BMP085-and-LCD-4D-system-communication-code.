@@ -10,7 +10,6 @@ This is a derivative work based on:
    SparkFun Electronics
    date: 1/18/11
    Source: http://www.sparkfun.com/tutorial/Barometric/BMP085_Example_Code.pde
-
    & John Burns (www.john.geek.nz)
 
    & Gordon Henderson for BMP code
@@ -39,14 +38,16 @@ Circuit detail:
 
 
 Use make to compil.
-Depends on libgeniePi https://github.com/4dsystems/ViSi-Genie-RaspPi-Library
-Depends on GENIE_OBJ_THERMOMETER objet 
-Depends on GENIE_OBJ_COOL_GAUGE objet
-TODO:
 
+Depends on libgeniePi https://github.com/4dsystems/ViSi-Genie-RaspPi-Library
+Depends on WiringPi https://github.com/WiringPi/WiringPi
+Depends on a LCD 4D system:
+	-Depends on GENIE_OBJ_THERMOMETER objet 
+	-Depends on GENIE_OBJ_COOL_GAUGE objet
+	-Depends on GENIE_OBJ_GAUGE objet
+TODO:
 Manage Genie Event
 Make a bar graph history temperature
-Add function to adjust noise level and some features for the lighting detection module
  ***********************************************************************
  */
 
