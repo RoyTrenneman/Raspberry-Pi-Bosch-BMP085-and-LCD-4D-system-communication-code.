@@ -1,56 +1,9 @@
 /*
-
-Raspberry Pi BMP180 pressure sensor & AS3935 lightning sensor on  LCD 4D Sytems Visi-Genie communication code 
-by:	Roy Trenneman
-date 	May 2015
-
-This is a derivative work based on:
-
-   Jim Lindblom
-   SparkFun Electronics
-   date: 1/18/11
-   Source: http://www.sparkfun.com/tutorial/Barometric/BMP085_Example_Code.pde
-   & John Burns (www.john.geek.nz)
-
-   & Gordon Henderson for BMP code
-   & Folkert van Heusden for AS3935 code
-
-Circuit detail:
-   Using a Spark Fun Barometric Pressure Sensor - BMP085 breakout board
-   link: https://www.sparkfun.com/products/9694
-   This comes with pull up resistors already on the i2c lines.
-   BMP085 pins below are as marked on the Sparkfun BMP085 Breakout board
-
-   SDA   -    P1-03 / IC20-SDA
-   SCL   -    P1-05 / IC20_SCL
-   XCLR   -    Not Connected
-   EOC   -   Not Connected
-   GND   -   P1-06 / GND
-   VCC   -    P1-01 / 3.3V
-    
-   Note: Make sure you use P1-01 / 3.3V NOT the 5V pin.
-
-Circuit detail:
-  Using a AS3935 based lightning and storm sensor module
-  Link : http://www.embeddedadventures.com/as3935_lightning_sensor_module_mod-1016.html
- Datasheet module: http://www.embeddedadventures.com/datasheets/MOD-1016_hw_v6_doc_v3.pdf
- Datasheet processor : http://www1.futureelectronics.com/doc/AUSTRIAMICROSYSTEMS/AS3935.pdf
-
-
-Use make to compil.
-
-Depends on libgeniePi https://github.com/4dsystems/ViSi-Genie-RaspPi-Library
-Depends on WiringPi https://github.com/WiringPi/WiringPi
-Depends on a LCD 4D system:
-	-Depends on GENIE_OBJ_THERMOMETER objet 
-	-Depends on GENIE_OBJ_COOL_GAUGE objet
-	-Depends on GENIE_OBJ_GAUGE objet
 TODO:
 Manage Genie Event
 Make a bar graph history temperature
  ***********************************************************************
  */
-
 #include <stdio.h>
 #include <fcntl.h>
 #include <stdlib.h>
