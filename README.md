@@ -20,6 +20,10 @@ set up, though depending on the breakout board that you use, you may
 not see anything show up when you run `i2cdetect`.
 
 ## Installation
+Use Make to build the binary called "Weather"
+```
+make
+```
 
 You have to install libgeniePi
 ```
