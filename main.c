@@ -154,7 +154,10 @@ void getdistance(void)
 		distance = AS3935_returnDistance();
  		printf("Lightning detected, it was %d km away \n", distance);
 		sleep(1);
- 	}
+ 	} else if ( INT_L == 1 ){
+		printf(" noise level too high, ajusting: \n");
+	  	set_noise();
+	}
 // empty buffer
 	fflush(stdout);
 }
