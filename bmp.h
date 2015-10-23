@@ -1,6 +1,6 @@
 #ifndef LIB_BMP_H
 #define LIB_BMP_H
-
+extern int bmp085_i2c_Begin();
 extern unsigned int bmp085_Calibration();
 extern unsigned int bmp085_ReadUP();
 extern unsigned int bmp085_ReadUT();

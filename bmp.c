@@ -88,10 +88,9 @@ void bmp085_i2c_Read_Block(int fd, __u8 address, __u8 length, __u8 *values)
 }
 
 
-unsigned int bmp085_Calibration()
+unsigned int bmp085_Calibration(int fd)
 {
 
-   int fd = bmp085_i2c_Begin();
    if (fd > 0){
    ac1 = bmp085_i2c_Read_Int(fd,0xAA);
    ac2 = bmp085_i2c_Read_Int(fd,0xAC);
@@ -105,16 +104,14 @@ unsigned int bmp085_Calibration()
    mc = bmp085_i2c_Read_Int(fd,0xBC);
    md = bmp085_i2c_Read_Int(fd,0xBE);
    return fd;
-   close(fd);
    }
 return 0;
 }
 
 // Read the uncompensated temperature value
-unsigned int bmp085_ReadUT()
+unsigned int bmp085_ReadUT(int fd)
 {
    unsigned int ut = 0;
-   int fd = bmp085_i2c_Begin();
 
    // Write 0x2E into Register 0xF4
    // This requests a temperature reading
@@ -126,17 +123,13 @@ unsigned int bmp085_ReadUT()
    // Read the two byte result from address 0xF6
    ut = bmp085_i2c_Read_Int(fd,0xF6);
 
-   // Close the i2c file
-   close (fd);
-   
    return ut;
 }
 
 // Read the uncompensated pressure value
-unsigned int bmp085_ReadUP()
+unsigned int bmp085_ReadUP(int fd)
 {
    unsigned int up = 0;
-   int fd = bmp085_i2c_Begin();
 
    // Write 0x34+(BMP085_OVERSAMPLING_SETTING<<6) into register 0xF4
    // Request a pressure reading w/ oversampling setting

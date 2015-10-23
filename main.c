@@ -43,6 +43,7 @@ int historyp [8] = {0} ;
 int historyt [8] = {0} ;
 int distance  ;
 int INT_L;
+int fd;
 
 void usage()
 {
@@ -132,15 +133,15 @@ static void *handleTemperaturePressure (void *data)
 	double delta ;
 
 	for (;;){
-		if(bmp085_Calibration() > 0 ){
-			temperature = bmp085_GetTemperature(bmp085_ReadUT());
+		if(bmp085_Calibration(fd) > 0 ){
+			temperature = bmp085_GetTemperature(bmp085_ReadUT(fd));
 			sleep(1);
-			pressure = bmp085_GetPressure(bmp085_ReadUP());
+			pressure = bmp085_GetPressure(bmp085_ReadUP(fd));
 			int press = round(pressure/100);
 			int temp = round(temperature/10);
 			updateTemp (temp) ;
 			updatePressure (press) ;
-			sleep(10) ; //Wait 10s to avoid concurrent access
+			sleep(4) ; //Wait 4s to avoid concurrent access
   			sec = time (NULL);
   			delta = difftime(sec,  initial);
    			if (delta > sample ){
@@ -149,7 +150,7 @@ static void *handleTemperaturePressure (void *data)
 				sleep (1);
 			}
 		}	
-		sleep (10);
+		sleep (2);
 	}
 	return 0;
 }
@@ -182,7 +183,8 @@ int main (int argc, char *argv[])
 			pthread_t bmp085 ;
 //Start the Calibration 
 			AS3935_Calibration();
-
+//Open file descriptor for dev/i2c only once 
+			fd = bmp085_i2c_Begin();
 			if (wiringPiSetupGpio () < 0) {
 				fprintf (stderr, "Unable to setup wiringPi: %s\n", strerror (errno)) ;
     				return 1 ;
